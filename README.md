@@ -1,7 +1,7 @@
 Capstone Project
 ==============================
 
-mlops capstone project
+mlops capstone project is a text classification project , that will tell on the basis of reviews from public the movie is good or bad 
 
 Project Organization
 ------------
