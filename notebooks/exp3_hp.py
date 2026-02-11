@@ -71,6 +71,7 @@ def load_prepare_data(filepath):
 # =========================================================
 def train_and_log_model(X_train, X_test, y_train, y_test, vectorizer):
 
+    #  defining logistic regression params , l1 & l2 regularization 
     param_grid = {
         "C": [0.1, 1, 10],
         "penalty": ["l1", "l2"],
