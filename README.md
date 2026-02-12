@@ -3,6 +3,26 @@ Capstone Project
 
 mlops capstone project is a text classification project , that will tell on the basis of reviews from public the movie is good or bad 
 
+data_ingestion.py
+    └── load_data()
+    └── validate_schema()
+    └── split_data()
+    └── save_raw()
+
+final_df = df[df['sentiment'].isin(['positive', 'negative'])]
+final_df['sentiment'] = final_df['sentiment'].replace({'positive': 1, 'negative': 0})
+do above in feature engineering 
+
+data_preprocessing.py
+    └── clean_text()
+    └── encode_labels()
+    └── remove_urls()
+    └── lemmatize()
+    └── save_interim()
+
+
+
+
 Project Organization
 ------------
 
