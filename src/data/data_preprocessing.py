@@ -27,7 +27,7 @@ def preprocess_dataframe(df:pd.DataFrame , col='text') -> pd.DataFrame:
         text = text.replace('؛', "")
         text = re.sub(r'\s+', ' ', text).strip()
         
-        text =  "".join([word for word in text.split() if word not in stop_words])
+        text = " ".join([word for word in text.split() if word not in stop_words])
         
          # Lemmatization
         text = " ".join([lemmatizer.lemmatize(word) for word in text.split()])

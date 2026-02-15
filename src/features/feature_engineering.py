@@ -28,6 +28,8 @@ def encode_labels(df: pd.DataFrame) -> pd.DataFrame:
     """
     Move label encoding here (Feature Engineering stage)
     """
+    # Normalize labels FIRST
+    df['sentiment'] = df['sentiment'].astype(str).str.strip().str.lower()
     df = df[df['sentiment'].isin(['positive', 'negative'])].copy()
     df['sentiment'] = df['sentiment'].map({'positive': 1, 'negative': 0 }).astype(int)
 
@@ -40,6 +42,11 @@ def apply_bow(train_data: pd.DataFrame,test_data: pd.DataFrame,max_features: int
         # label encoding moved here
         train_data = encode_labels(train_data)
         test_data = encode_labels(test_data)
+        
+        
+        print(train_data['sentiment'].value_counts())
+        print(test_data['sentiment'].value_counts())
+
 
         vectorizer = CountVectorizer(max_features=max_features)
 
@@ -78,10 +85,11 @@ def apply_bow(train_data: pd.DataFrame,test_data: pd.DataFrame,max_features: int
 
 def main():
     try:
-        max_features = 20
+        max_features = 2000
 
         train_data = load_data('./data/interim/train_processed.csv')
         test_data = load_data('./data/interim/test_processed.csv')
+       
 
         train_df, test_df = apply_bow(train_data, test_data, max_features)
 
