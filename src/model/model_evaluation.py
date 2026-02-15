@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score,f1_score, roc_auc_score
 import pickle
 import json
 from src.logger import logging
@@ -31,6 +31,33 @@ mlflow.set_tracking_uri(uri="https://dagshub.com/chauhan7gaurav/mlops_capstone.m
 dagshub.init(repo_owner='chauhan7gaurav', repo_name='mlops_capstone', mlflow=True)
 mlflow.set_experiment("capston pipeline")
 
+def evaluate_model(clf , X_test , y_test ):
+    try:
+        y_pred = clf.predict(X_test)
+        y_pred_proba = clf.predict_proba(X_test)[:, 1]
+        
+        accuracy = accuracy_score(y_test,y_pred)
+        precision = precision_score(y_test,y_pred)
+        recall = recall_score(y_test,y_pred)
+        f1 = f1_score(y_test,y_pred)
+        auc = roc_auc_score(y_test,y_pred_proba)
+        
+        metrics = {
+            'accuracy':accuracy,
+            'precision': precision,
+            'recall': recall,
+            'f1':f1,
+            'auc':auc
+        }
+        
+        # mlflow.log_metrics(metrics)
+        
+        logging.info(f'Model evaluation metrics calculated: {metrics}')
+        return metrics, y_pred, y_test
+    
+    except Exception as e:
+        raise e
+
 def save_metrics(metrics: dict, file_path: str) -> None:
     """Save the evaluation metrics to a JSON file."""
     try:
@@ -40,3 +67,53 @@ def save_metrics(metrics: dict, file_path: str) -> None:
     except Exception as e:
         logging.error('Error occurred while saving the metrics: %s', e)
         raise
+ 
+"""Save the model run ID and path to a JSON file."""   
+def save_model_info(run_id:str , model_path:str , file_path:str ):
+    try:
+        model_info = {'run_id':run_id , 'model_path':model_path}
+        with open(file_path,'w') as file:
+            json.dump(model_info,file , indent=4)
+    except Exception as e:
+        raise e
+
+def main():
+    with mlflow.start_run() as run:
+        try:
+    
+            test_data = load_data('./data/processed/test_bow.csv')
+
+            X_test = test_data.iloc[:,:-1].values
+            y_test = test_data.iloc[: ,-1].values
+
+            clf = load_model(file_path="./models/model.pkl")
+
+            metrics, y_pred, y_test = evaluate_model(clf , X_test , y_test)
+            
+            os.makedirs("reports", exist_ok=True)
+            save_metrics(metrics , file_path='reports/metrics.json')
+
+            logging.info(" logging metrics ")
+            for metric_name, metric_value in metrics.items():
+                    mlflow.log_metric(metric_name, metric_value)
+
+            logging.info(" logging model ")       
+            mlflow.sklearn.log_model(clf, name="model")
+
+
+            logging.info("saving model")
+            save_model_info(run.info.run_id, "model", 'reports/experiment_info.json')
+
+            logging.info("logging artifacts")
+            mlflow.log_artifact('reports/metrics.json')
+            print("Unique predictions:", np.unique(y_pred, return_counts=True))
+            print("Unique labels:", np.unique(y_test, return_counts=True))
+
+        except Exception as e:
+            raise e
+        
+if __name__ == '__main__':
+    main()
+        
+                
+        
