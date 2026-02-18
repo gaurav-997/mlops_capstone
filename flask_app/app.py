@@ -130,6 +130,7 @@ if model_version:
     model_uri = f'models:/{model_name}/{model_version}'
     print(f"Fetching model from: {model_uri}")
     model = mlflow.pyfunc.load_model(model_uri)
+    
 else:
     # Fallback to local model file if no MLflow model version found
     local_model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models', 'model.pkl'))
