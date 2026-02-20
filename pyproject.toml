@@ -21,7 +21,9 @@ dependencies = [
     "mlflow==2.18.0",
     "dvc[s3]==3.55.2",
     "dagshub==0.3.34",
-    "dacite~=1.6.0",   # IMPORTANT: dagshub compatible
+    "dacite~=1.6.0",
+    "pathspec<0.12.0",
+    "fsspec<2025.0.0",
 
     # -------- AWS --------
     "boto3>=1.35.0",
