@@ -29,12 +29,35 @@ jobs:
                 restore-keys: |
                   ${{ runner.os }}-pip-
             
-            - name: upgrade pip, setuptools and wheel
+            - name: upgrade pip and wheel
               run: |
-                python -m pip install --upgrade pip setuptools wheel
+                python -m pip install --upgrade pip wheel
 
-            - name: install dependicies
-              run: pip install -r requirements.txt
+            - name: ensure setuptools is installed
+              run: |
+                python -m pip install --upgrade setuptools || true
+
+            - name: check pkg_resources and setuptools (diagnostic)
+              run: |
+                python - <<'PY'
+                try:
+                    import pkg_resources
+                    print('pkg_resources ok:', getattr(pkg_resources, '__file__', 'unknown'))
+                except Exception as e:
+                    print('pkg_resources missing:', e)
+                try:
+                    import setuptools
+                    print('setuptools ok:', setuptools.__version__)
+                except Exception as e:
+                    print('setuptools missing:', e)
+                PY
+
+            - name: install dependencies
+              run: python -m pip install -r requirements.txt
+
+            - name: reinstall setuptools to ensure pkg_resources is available
+              run: |
+                python -m pip install --force-reinstall --no-deps setuptools>=65.0.0
 
             - name: run pipeline
               env:
