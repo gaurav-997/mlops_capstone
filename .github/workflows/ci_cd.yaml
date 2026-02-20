@@ -36,6 +36,11 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
           python -m pip install -e .
+      
+      - name: Download NLTK data
+        run: |
+          python -m nltk.downloader stopwords wordnet omw-1.4
+  
 
       - name: run pipeline
         env:
