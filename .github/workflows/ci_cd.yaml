@@ -17,9 +17,9 @@ jobs:
               uses: actions/checkout@v3
 
             - name: setup python
-              uses: actions/setup-python@v2
+              uses: actions/setup-python@v5
               with:
-                python-version: '3.10'
+                python-version: '3.12'
 
             - name: Cache pip dependencies
               uses: actions/cache@v3
@@ -29,39 +29,14 @@ jobs:
                 restore-keys: |
                   ${{ runner.os }}-pip-
             
-            - name: upgrade pip and wheel
+            - name: upgrade pip
               run: |
-                python -m pip install --upgrade pip wheel setuptools>=65.0.0
+                python -m pip install --upgrade pip setuptools wheel
 
-            - name: ensure setuptools is installed
+            - name: install dependencies and package
               run: |
-                python -m pip install --upgrade setuptools>=65.0.0 || true
-
-            - name: check pkg_resources and setuptools (diagnostic)
-              run: |
-                python - <<'PY'
-                try:
-                    import pkg_resources
-                    print('pkg_resources ok:', getattr(pkg_resources, '__file__', 'unknown'))
-                except Exception as e:
-                    print('pkg_resources missing:', e)
-                try:
-                    import setuptools
-                    print('setuptools ok:', setuptools.__version__)
-                except Exception as e:
-                    print('setuptools missing:', e)
-                PY
-
-            - name: install dependencies
-              run: python -m pip install --upgrade-strategy only-if-needed -r requirements.txt
-
-            - name: reinstall setuptools to ensure pkg_resources is available
-              run: |
-                python -m pip install --force-reinstall setuptools>=65.0.0
-
-            - name: verify pkg_resources is available
-              run: |
-                python -c "import pkg_resources; print('pkg_resources version:', pkg_resources.__version__)"
+                python -m pip install -r requirements.txt
+                python -m pip install -e .
 
             - name: run pipeline
               env:
