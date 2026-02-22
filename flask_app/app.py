@@ -70,30 +70,44 @@ def normalize_text(text):
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri(uri="https://dagshub.com/chauhan7gaurav/mlops_capstone.mlflow")
-dagshub.init(repo_owner='chauhan7gaurav', repo_name='mlops_capstone', mlflow=True)
+# mlflow.set_tracking_uri(uri="https://dagshub.com/chauhan7gaurav/mlops_capstone.mlflow")
+# dagshub.init(repo_owner='chauhan7gaurav', repo_name='mlops_capstone', mlflow=True)
 # -------------------------------------------------------------------------------------
+# -------------------------------
+# MLflow + Dagshub Setup
+# -------------------------------
 
-# Below code block is for production use
-# -------------------------------------------------------------------------------------
-# Set up DagsHub credentials for MLflow tracking
-# dagshub_token = os.getenv("CAPSTONE_TEST")
-# if not dagshub_token:
-#     raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+def setup_mlflow():
+    """
+    Setup MLflow tracking with Dagshub.
+    Moved inside function to avoid import-time crashes.
+    """
+    dagshub_token = os.getenv("CAPSTONE_TEST")
+    if not dagshub_token:
+        raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
 
-# os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
-# os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+    os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+    os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
-# dagshub_url = "https://dagshub.com"
-# repo_owner = "vikashdas770"
-# repo_name = "YT-Capstone-Project"
-# # Set up MLflow tracking URI
-# mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
-# -------------------------------------------------------------------------------------
+    dagshub_url = "https://dagshub.com"
+    repo_owner = "chauhan7gaurav"
+    repo_name = "mlops_capstone"
+
+    mlflow.set_tracking_uri(
+        f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow"
+    )
 
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Setup MLflow tracking (call this early before any MLflow operations)
+try:
+    setup_mlflow()
+    print("✅ MLflow tracking configured successfully")
+except Exception as e:
+    print(f"⚠️ Warning: Could not setup MLflow tracking: {e}")
+    print("Will attempt to use local model fallback")
 
 # from prometheus_client import CollectorRegistry
 

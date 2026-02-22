@@ -1,0 +1,83 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+
+# Python cache
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation
+docs/
+*.md
+README*
+LICENSE
+
+# Notebooks and experiments
+notebooks/
+*.ipynb
+experiments/
+
+# Data files (exclude large datasets, keep only models)
+data/
+*.csv
+*.json
+*.parquet
+
+# DVC files
+.dvc/
+*.dvc
+dvc.lock
+dvc.yaml
+
+# MLflow tracking
+mlruns/
+
+# Logs
+logs/
+*.log
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Credentials
+credentials.txt
+.env
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
